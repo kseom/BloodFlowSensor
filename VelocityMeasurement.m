@@ -43,7 +43,7 @@ emf = -N * diff(y);
 figure
 plot(t,EMF); xlabel('Time(s)'); ylabel('Electromotive Force(V)');
 
-
+%% test
 
 
 
