@@ -1,7 +1,7 @@
 %% Direction Measurement (Magnetic Field)
 %% Description
 % 피가 흐르는 방향으로 센서를 이동시킬 때 혈류 속도와 센서의 이동속도간의 
-% 상대속도를 계산. 상대속도(v_r)에 따른 Rate Change Of MagneticField를 구한다.
+% 상대속도를 계산. 상대속도(v_r)에 따른 Rate Change Of MagneticField를 구한다. dsdfsdf
 %% Parameter setting
 clear all
 clc
