@@ -15,28 +15,47 @@ interval = 1e-6;
 
 graphType = 'x';
 x_pnt=0; y_pnt = 0.5e-4; % location of the sensor
+%% Coil settings
+
+N_turn = 50;    % 임의의 값
+r = 5e-3;      % Radius of coil [m]
+d = 5e-2;     % Length of coil [m]
 
 %% Angle of Coil
-pos=5;
 
+pos=5;
+Turn_No_max = 5;
+
+for i=1:Turn_No_max;
+    angle = pi  * i / (pos*2);
+%    [X_data, Y_data] = AddMagneticField(N_p,d_int,graphType,x_pnt,y_pnt,interval,N,v);
+%    [pks,locs] = findpeaks(Y_data);
+    [time,MField] = RateChangeOfMagneticField(N_p,d_int,graphType,x_pnt,y_pnt,dura,interval,N,v);
+    timeVaryingMField = (MField(2:end)-MField(1:end-1))./(time(2)-time(1));
+    emf = -N_turn * timeVaryingMField * pi * (r^2) * cos(angle);    % Dot product -> cos(angle)
+    [PeakVal(i),i] = max( findpeaks( emf ) );
+end
+
+
+angle = linspace(0,90,pos);
+
+figure;
+plot(angle,PeakValAngle);
+title('Sensor Variation2 - Rotation');
+xlabel('Angle of Coil relative to Blood flow direction'); ylabel('Peak Magnetic Field');
+
+
+%% Fixed
 %PeakVal = []; % PeakValue of AddedMagneticField depending on position of sensor
 [X_data,Y_data] = AddMagneticField(N_p,d_int,graphType,x_pnt,y_pnt,interval,N,v);
-PeakVal = max( findpeaks( Y_data ) );
+PeakVal = max( findpeaks( Y_data ) );   % maximum value of added magnetic field
 PeakValAngle = [];
-Angle = [];
+Angle = []; % angle check
 for i = 1 : pos
    angle = pi  * i / (pos*2);
    Angle(i) = angle;
    PeakValAngle(i) = PeakVal .* cos(angle);
 end
-
-angle = linspace(0,90,pos);
-figure;
-plot(angle,PeakValAngle);
-title('Sensor Variation2 - Rotation');
-xlabel('Distance between Coil and RBCs'); ylabel('Peak EMF Voltage');
-
-
 %% Calculate the angle between direction of blood flow and location of sensor
 % Assume that blood flows in the direction parallel to +x direction
 %timeVaryingMField = (MField(2:end)-MField(1:end-1))./(time(2)-time(1));
