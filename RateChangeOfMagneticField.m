@@ -21,5 +21,5 @@ n_cyc = round(dura/(length(Y_data_new)*interval/v));
 MField = repmat(Y_data_new,1,n_cyc);
 time = (0:1:length(MField)-1)*interval/v;
 
-figure
-plot(time, MField); xlabel('time (s)'); ylabel('Magnetic field (T)');
+%figure
+%plot(time, MField); xlabel('time (s)'); ylabel('Magnetic field (T)');
