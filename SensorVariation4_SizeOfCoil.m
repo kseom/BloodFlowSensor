@@ -39,4 +39,4 @@ radius = linspace(1e-3, r_max * 1e-3, r_max);
 figure;
 plot(radius,PeakVal);
 title('Sensor Variation4 - Coil Size');
-xlabel('Number of Turns of Coil'); ylabel('Peak EMF Voltage');
+xlabel('Size of Coil(m)'); ylabel('Peak EMF Voltage(V)');

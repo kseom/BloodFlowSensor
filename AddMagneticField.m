@@ -48,7 +48,7 @@ switch graphType
     case 'x'
         [Val, Idx] = min(abs(y(:,1)-y_pnt));
         X_data = x(1,:); Y_data = B(Idx,:);
-        %plot(X_data,Y_data);
+        plot(X_data,Y_data);
     case 'y'        
         [Val, Idx] = min(abs(x(1,:)-x_pnt));
         X_data = y(:,1); Y_data = B(:,Idx);
@@ -56,5 +56,5 @@ switch graphType
     otherwise
         warning('Unexpected plot type. No plot created.')
 end
-%xlabel('distance (m)'); ylabel('Magnetic field (T)');
+xlabel('distance (m)'); ylabel('Magnetic field (T)');
 end

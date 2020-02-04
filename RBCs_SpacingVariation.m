@@ -37,7 +37,7 @@ for i=1:d_max;
     freq_emf(i) = 1./( abs( time( PeakTime(2) )-time( PeakTime(1) ) ) );
 end
 
-d_int = linspace(1,d_max,d_max);
+d_int = linspace(3 * 2e-5,(d_max+2) * 2e-5,d_max);
 figure
 plot(d_int,freq_emf);
 title('RBC Spacing'); xlabel('Interparticle spacing(RBCs Spacing)'); ylabel('Frequency of EMF');

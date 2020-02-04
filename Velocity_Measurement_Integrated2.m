@@ -32,7 +32,10 @@ d = 5e-2;     % Length of coil [m]
 timeVaryingMField = (MField(2:end)-MField(1:end-1))./(time(2)-time(1));
 emf1 = -N_turn * timeVaryingMField * pi * (r^2);
 
-
+figure(1)
+plot(time(1:end-1),emf1, 'black'); hold on;
+xlim([0 4e-4]);
+title('Sensor Direction Measurement'); xlabel('Time(s)'); ylabel('Electromotive Force(V)');
 %% A sensor moving in the direction concordance with blood flow
 
 v_sensor1 = 0.5;        % a sensor moving in the direction concordance with blood flow
@@ -45,6 +48,9 @@ AddMagneticField(N_p,d_int,graphType,x_pnt,y_pnt,interval,N,v_r1);
 timeVaryingMField = (MField(2:end)-MField(1:end-1))./(time(2)-time(1));
 emf2 = -N_turn * timeVaryingMField * pi * (r^2);
 
+figure(1)
+plot(time(1:end-1),emf2, 'red'); hold on;
+%title('A sensor moving in the direction concordance with blood flow'); xlabel('Time(s)'); ylabel('Electromotive Force(V)');
 
 %% A sensor moving in the opposite direction with blood flow
 
@@ -58,18 +64,12 @@ AddMagneticField(N_p,d_int,graphType,x_pnt,y_pnt,interval,N,v_r2);
 timeVaryingMField = (MField(2:end)-MField(1:end-1))./(time(2)-time(1));
 emf3 = -N_turn * timeVaryingMField * pi * (r^2);
 
-
-
-%% Plot
-
-figure1
-plot(time(1:end-1),emf1, 'black'); hold on;
-title('EMF due to blood flow'); xlabel('Time(s)'); ylabel('Electromotive Force(V)');
-
-plot(time(1:end-1),emf2, 'red'); hold on;
-
+figure(1)
 plot(time(1:end-1),emf3, 'blue'); hold off;
 
+%title('A sensor moving in the opposite direction with blood flow'); xlabel('Time(s)'); ylabel('Electromotive Force(V)');
+
+%%
 %y = MField * pi * (r^2);    % Magnetic Field is perpendicular to the surface of coil
 %emf = -N * diff(y);
 
