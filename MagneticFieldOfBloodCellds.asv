@@ -1,0 +1,158 @@
+%% Magnetic Field of Blood Cellds
+
+clc;
+clear;
+
+%% Setting
+
+N_p = 30; % number of particle
+d_int = 1e-4; % interparticle spacing
+
+N = 1; % Number of positive point charge consisting a group / (2.464e-12 / 1.6e-19)
+v = 1; % meter per second
+dura = 0.0005;
+interval = 1e-6;
+
+graphType = 'x';
+x_pnt = 0; y_pnt = 0.5e-4; % location of the sensor
+
+%% Calculate Induced EMF(Electromotive Force)
+
+% Coil settings
+N_turn = 50;    % 임의의 값
+r = 5e-3;      % Radius of coil [m]
+d = 5e-2;     % Length of coil [m]
+
+%%
+
+N_WBC = 30;
+N_RBC = 30;
+
+N_p = N_RBC+N_WBC;
+
+ratio = 10;  % Since ratio of RBC/WBC is too large, I used smaller number.
+
+q_RBC = -1.47e-11;
+q_WBC = -2.79e-10;
+
+BC = ones(N_WBC+N_RBC,1) * q_RBC;
+BC( rand(N_WBC+N_RBC,1)<(1/ratio) ) = q_WBC; % Set Location of WBCs and RBCs
+
+Num_RBC = 0;
+for i=1 : N_RBC+N_WBC
+    N_R(i) = (BC(i)==q_RBC);
+    if BC(i) == q_RBC
+        Num_RBC=Num_RBC+1;
+    end
+    if BC(N_p)==q_RBC
+        Num_RBC=Num_RBC -1;
+    end
+end
+
+Num_WBC = N_p - Num_RBC;
+%% Particle location
+x_lim = (N_WBC+N_RBC+2)*d_int/2;
+y_lim = (N_WBC+N_RBC+2)*d_int/2;
+
+if N_WBC+N_RBC/2 == 0
+    x_loc = linspace(-1*N_WBC+N_RBC/2*d_int,N_WBC+N_RBC/2*d_int,N_WBC+N_RBC);
+else
+    x_loc = linspace(-1*(N_WBC+N_RBC+1)/2*d_int,(N_WBC+N_RBC+1)/2*d_int,N_WBC+N_RBC);
+end
+y_loc = 0;
+
+%% Add the magnetic field from RBCs
+
+for i = 1:N_WBC+N_RBC
+    if i == 1
+        [x,y,B1] = MagneticField(x_loc(i),y_loc,x_lim,y_lim,interval,N,v);  % This part should be fixed (unwanted ripple is shown)
+    end
+    if BC(i) == q_RBC
+        [x,y,B1_temp] = MagneticField(x_loc(i),y_loc,x_lim,y_lim,interval,N,v);
+        B1 = B1 + B1_temp;
+    end
+end
+
+[Val, Idx] = min(abs(y(:,1)-y_pnt));
+X_data1 = x(1,:); Y_data1 = B1(Idx,:);
+figure(1)
+plot(X_data1,Y_data1);
+xlabel('Time(s)'); ylabel('Magnetic Field(T)');
+
+%% Rate Change Of Magnetic Field due to RBCs
+
+[pks1,locs1] = findpeaks(Y_data1);
+
+if length(pks1) ~= Num_RBC
+    warning('Unexpected error in the number of peaks')
+end
+
+idx_temp1 = locs1(round(length(pks1)/2)); idx_center1 = round(length(Y_data1)/2);
+
+if idx_temp1 >= idx_center1
+    idx_1st1 = locs1(round(length(pks1)/2)-1); idx_2nd1 = idx_temp1;
+else
+    idx_1st1 = idx_temp1; idx_2nd1 = locs1(round(length(pks1)/2)+1);
+end
+
+%% rate change of magnetic field of RBCs
+Y_data_new1 = [Y_data1(idx_center1:idx_2nd1), Y_data1(idx_1st1+1:idx_center1-1)]; Y_data_new1 = flip(Y_data_new1);
+n_cyc1 = round(dura/(length(Y_data_new1)*interval/v));
+MField1 = repmat(Y_data_new1,1,n_cyc1);
+time1 = (0:1:length(MField1)-1)*interval/v;
+
+%% emf of RBCs
+timeVaryingMField1 = (MField1(2:end)-MField1(1:end-1))./(time1(2)-time1(1));
+emf1 = -N_turn * timeVaryingMField1 * pi * (r^2);
+
+figure(3)
+plot(time1(1:end-1),emf1, 'black');
+% xlim([0 4e-4]);
+xlabel('Time(s)'); ylabel('Electromotive Force(V)');
+
+
+%% Add the magnetic field from WBCs
+for i = 1:N_WBC+N_RBC
+    if i == 1
+        [x,y,B2] = MagneticField(x_loc(i),y_loc,x_lim,y_lim,interval,N,v);
+    end
+    if BC(i) == q_WBC
+        [x,y,B2_temp] = MagneticField(x_loc(i),y_loc,x_lim,y_lim,interval,N,v);
+        B2 = B2 + B2_temp;
+    end
+end
+
+[Val, Idx] = min(abs(y(:,1)-y_pnt));
+X_data2 = x(1,:); Y_data2 = B2(Idx,:);
+figure(2)
+plot(X_data2,Y_data2);
+xlabel('Time(s)'); ylabel('Magnetic Field(T)');
+
+%% Rate Change Of Magnetic Field due to WBCs
+
+[pks2,locs2] = findpeaks(Y_data2);
+
+if length(pks2) ~= (N_p-Num_RBC-1)
+    warning('Unexpected error in the number of peaks')
+end
+
+idx_temp2 = locs2(round(length(pks2)/2)); idx_center2 = round(length(Y_data2)/2);
+
+if idx_temp2 >= idx_center2
+    idx_1st2 = locs2(round(length(pks2)/2)-1); idx_2nd2 = idx_temp2;
+else
+    idx_1st2 = idx_temp2; idx_2nd2 = locs2(round(length(pks2)/2)+1);
+end
+
+%% rate change of magnetic field of WBCs
+Y_data_new2 = [Y_data2(idx_center2:idx_2nd2), Y_data2(idx_1st2+1:idx_center2-1)]; Y_data_new2 = flip(Y_data_new2);
+n_cyc2 = round(dura/(length(Y_data_new2)*interval/v));
+MField2 = repmat(Y_data_new2,1,n_cyc2);
+time2 = (0:1:length(MField2)-1)*interval/v;
+
+%% emf of WBCs
+timeVaryingMField2 = (MField2(2:end)-MField2(1:end-1))./(time2(2)-time2(1));
+emf2 = -N_turn * timeVaryingMField2 * pi * (r^2);
+
+figure(4)
+plot(time2(1:end-1),emf2, 'blue');

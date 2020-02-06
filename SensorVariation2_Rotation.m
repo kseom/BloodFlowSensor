@@ -38,4 +38,4 @@ angle = linspace(0,90,pos);
 figure;
 plot(angle,PeakVal);
 title('Sensor Variation2 - Rotation');
-xlabel('Angle of Coil relative to Blood flow direction'); ylabel('Peak EMF Voltage');
+xlabel('Angle of Coil relative to Blood flow direction (Degree)'); ylabel('Peak EMF Voltage(V)');

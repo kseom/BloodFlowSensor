@@ -42,4 +42,4 @@ DistSensor = linspace(3e-5, (pos+2)*1e-5, pos);
 figure;
 plot(DistSensor,PeakVal);
 title('Sensor Variation1 - Position');
-xlabel('Distance between Coil and RBCs'); ylabel('Peak EMF Voltage');
+xlabel('Distance between Coil and RBC-capillary radius'); ylabel('Peak EMF Voltage');

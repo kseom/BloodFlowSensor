@@ -40,4 +40,4 @@ Turns = linspace(50, Turn_No_max*50, Turn_No_max);
 figure;
 plot(Turns,PeakVal);
 title('Sensor Variation3 - N_Turn');
-xlabel('Number of Turns of Coil'); ylabel('Peak EMF Voltage');
+xlabel('Number of Turns of Coil'); ylabel('Peak EMF Voltage(V)');
